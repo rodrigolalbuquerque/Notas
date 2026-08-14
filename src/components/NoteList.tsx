@@ -8,14 +8,18 @@ export default function NoteList({
   selectedId,
   onSelect,
   onCreate,
+  className = "",
 }: {
   notes: LocalNote[];
   selectedId: string | null;
   onSelect: (id: string) => void;
   onCreate: () => void;
+  className?: string;
 }) {
   return (
-    <section className="flex min-h-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <section
+      className={`${className} min-h-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm`}
+    >
       <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
         <div className="flex items-baseline gap-2">
           <h2 className="font-semibold text-slate-800">Notas</h2>

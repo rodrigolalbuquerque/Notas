@@ -17,6 +17,11 @@ export const metadata: Metadata = {
   title: "Notas",
   description: "Notas e lembretes categorizados, offline-first.",
   manifest: "/manifest.json",
+  icons: {
+    icon: { url: "/icons/icon.svg", type: "image/svg+xml" },
+    shortcut: "/icons/icon.svg",
+    apple: "/icons/icon.svg",
+  },
   appleWebApp: { capable: true, title: "Notas", statusBarStyle: "default" },
 };
 

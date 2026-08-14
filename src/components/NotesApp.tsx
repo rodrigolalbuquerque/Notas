@@ -32,6 +32,7 @@ export default function NotesApp({
   const [mode, setMode] = useState<TagMode>("or");
   const [view, setView] = useState<View>("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [status, setStatus] = useState<SyncStatus>({
     syncing: false,
     online: true,
@@ -116,6 +117,8 @@ export default function NotesApp({
         selectedTags={selectedTags}
         mode={mode}
         view={view}
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
         onToggleTag={toggleTag}
         onClearTags={() => setSelectedTags([])}
         onModeChange={setMode}
@@ -127,21 +130,26 @@ export default function NotesApp({
           userEmail={userEmail}
           view={view}
           status={status}
+          onMenuClick={() => setSidebarOpen(true)}
           onSignOut={handleSignOut}
         />
 
-        <main className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto p-6">
-          <FiltersCard
-            search={search}
-            selectedTags={selectedTags}
-            mode={mode}
-            onSearchChange={setSearch}
-            onToggleTag={toggleTag}
-            onCreate={handleCreate}
-          />
+        <main className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4 lg:gap-6 lg:p-6">
+          {/* No mobile, some enquanto edita uma nota. */}
+          <div className={selectedId ? "hidden lg:block" : "block"}>
+            <FiltersCard
+              search={search}
+              selectedTags={selectedTags}
+              mode={mode}
+              onSearchChange={setSearch}
+              onToggleTag={toggleTag}
+              onCreate={handleCreate}
+            />
+          </div>
 
-          <div className="grid min-h-0 flex-1 grid-cols-1 gap-6 lg:grid-cols-[minmax(280px,360px)_1fr]">
+          <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 lg:grid-cols-[minmax(280px,360px)_1fr] lg:gap-6">
             <NoteList
+              className={selectedId ? "hidden lg:flex" : "flex"}
               notes={visibleNotes}
               selectedId={selectedId}
               onSelect={setSelectedId}
@@ -150,10 +158,12 @@ export default function NotesApp({
 
             <NoteEditor
               key={selectedNote?.id ?? "empty"}
+              className={selectedId ? "flex" : "hidden lg:flex"}
               note={selectedNote}
               allTags={tags.map((t) => t.tag)}
               onSave={handleSave}
               onDelete={handleDelete}
+              onBack={() => setSelectedId(null)}
             />
           </div>
         </main>

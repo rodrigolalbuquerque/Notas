@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { ArrowLeft } from "lucide-react";
 import type { LocalNote, NoteDraft } from "@/lib/types";
 import TagsInput from "./TagsInput";
 import ConfirmDialog from "./ConfirmDialog";
@@ -27,11 +28,15 @@ export default function NoteEditor({
   allTags,
   onSave,
   onDelete,
+  onBack,
+  className = "",
 }: {
   note: LocalNote | null;
   allTags: string[];
   onSave: (id: string, patch: Partial<NoteDraft>) => void;
   onDelete: (id: string) => void;
+  onBack?: () => void;
+  className?: string;
 }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -86,21 +91,37 @@ export default function NoteEditor({
 
   if (!note) {
     return (
-      <section className="flex min-h-0 flex-1 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 shadow-sm">
+      <section
+        className={`${className} min-h-0 flex-1 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 shadow-sm`}
+      >
         Selecione ou crie uma nota
       </section>
     );
   }
 
   return (
-    <section className="flex min-h-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <section
+      className={`${className} min-h-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm`}
+    >
       <div className="flex items-center justify-between border-b border-slate-100 px-6 py-3">
-        <button
-          onClick={() => setPreview((p) => !p)}
-          className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
-        >
-          {preview ? "Editar" : "Concluir"}
-        </button>
+        <div className="flex items-center gap-2">
+          {onBack && (
+            <button
+              onClick={onBack}
+              aria-label="Voltar para a lista"
+              className="flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 lg:hidden"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Voltar
+            </button>
+          )}
+          <button
+            onClick={() => setPreview((p) => !p)}
+            className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+          >
+            {preview ? "Editar" : "Concluir"}
+          </button>
+        </div>
         <button
           onClick={() => setConfirmOpen(true)}
           className="rounded-lg px-3 py-1.5 text-sm font-medium text-red-600 transition hover:bg-red-50"

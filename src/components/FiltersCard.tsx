@@ -40,7 +40,7 @@ export default function FiltersCard({
 
         <button
           onClick={onCreate}
-          className="flex items-center justify-center gap-1.5 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-700"
+          className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-700 lg:w-auto"
         >
           <Plus className="h-4 w-4" />
           Nova nota

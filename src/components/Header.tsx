@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronRight, LogOut } from "lucide-react";
+import { ChevronRight, LogOut, Menu } from "lucide-react";
 import type { SyncStatus } from "@/lib/sync";
 import type { View } from "./NotesApp";
 import ConfirmDialog from "./ConfirmDialog";
@@ -10,11 +10,13 @@ export default function Header({
   userEmail,
   view,
   status,
+  onMenuClick,
   onSignOut,
 }: {
   userEmail: string;
   view: View;
   status: SyncStatus;
+  onMenuClick: () => void;
   onSignOut: () => void;
 }) {
   const [confirmOut, setConfirmOut] = useState(false);
@@ -22,9 +24,16 @@ export default function Header({
   const initial = (userEmail[0] || "?").toUpperCase();
 
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6">
-      {/* Breadcrumb */}
+    <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-4 lg:px-6">
+      {/* Breadcrumb + hambúrguer */}
       <nav className="flex items-center gap-1.5 text-sm">
+        <button
+          onClick={onMenuClick}
+          aria-label="Abrir menu"
+          className="-ml-1 mr-1 rounded-md p-1.5 text-slate-600 hover:bg-slate-100 lg:hidden"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
         <span className="text-slate-400">Notas</span>
         <ChevronRight className="h-4 w-4 text-slate-300" />
         <span className="font-semibold text-slate-800">{viewLabel}</span>

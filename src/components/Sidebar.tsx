@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Clock, StickyNote } from "lucide-react";
+import { FileText, Clock, StickyNote, X } from "lucide-react";
 import type { TagMode } from "@/lib/filter";
 import type { View } from "./NotesApp";
 
@@ -9,6 +9,8 @@ export default function Sidebar({
   selectedTags,
   mode,
   view,
+  open,
+  onClose,
   onToggleTag,
   onClearTags,
   onModeChange,
@@ -18,35 +20,65 @@ export default function Sidebar({
   selectedTags: string[];
   mode: TagMode;
   view: View;
+  open: boolean;
+  onClose: () => void;
   onToggleTag: (tag: string) => void;
   onClearTags: () => void;
   onModeChange: (m: TagMode) => void;
   onViewChange: (v: View) => void;
 }) {
-  return (
-    <aside className="flex w-64 shrink-0 flex-col border-r border-slate-200 bg-white">
-      {/* Marca */}
-      <div className="flex h-16 items-center gap-2 border-b border-slate-100 px-5">
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
-          <StickyNote className="h-5 w-5" />
-        </span>
-        <span className="text-lg font-semibold text-slate-800">Notas</span>
-      </div>
+  // Navegar (Todas/Próximos) fecha o drawer no mobile; filtrar por tag/modo
+  // mantém aberto para permitir multi-seleção.
+  const handleView = (v: View) => {
+    onViewChange(v);
+    onClose();
+  };
 
-      {/* Navegação */}
-      <nav className="px-3 py-4">
-        <NavItem
-          icon={<FileText className="h-4 w-4" />}
-          label="Todas as notas"
-          active={view === "all"}
-          onClick={() => onViewChange("all")}
+  return (
+    <>
+      {/* Backdrop (só mobile, quando aberto) */}
+      {open && (
+        <div
+          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+          onClick={onClose}
+          aria-hidden="true"
         />
-        <NavItem
-          icon={<Clock className="h-4 w-4" />}
-          label="Próximos"
-          active={view === "upcoming"}
-          onClick={() => onViewChange("upcoming")}
-        />
+      )}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 flex w-64 shrink-0 flex-col border-r border-slate-200 bg-white transition-transform lg:static lg:z-auto lg:translate-x-0 ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        {/* Marca */}
+        <div className="flex h-16 items-center gap-2 border-b border-slate-100 px-5">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
+            <StickyNote className="h-5 w-5" />
+          </span>
+          <span className="text-lg font-semibold text-slate-800">Notas</span>
+          <button
+            onClick={onClose}
+            aria-label="Fechar menu"
+            className="ml-auto rounded-md p-1 text-slate-500 hover:bg-slate-100 lg:hidden"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Navegação */}
+        <nav className="px-3 py-4">
+          <NavItem
+            icon={<FileText className="h-4 w-4" />}
+            label="Todas as notas"
+            active={view === "all"}
+            onClick={() => handleView("all")}
+          />
+          <NavItem
+            icon={<Clock className="h-4 w-4" />}
+            label="Próximos"
+            active={view === "upcoming"}
+            onClick={() => handleView("upcoming")}
+          />
       </nav>
 
       {/* Tags */}
@@ -112,7 +144,8 @@ export default function Sidebar({
           );
         })}
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }
 
