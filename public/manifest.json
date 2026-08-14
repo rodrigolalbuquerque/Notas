@@ -1,0 +1,19 @@
+{
+  "name": "Notas",
+  "short_name": "Notas",
+  "description": "Notas e lembretes categorizados, offline-first.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#171717",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

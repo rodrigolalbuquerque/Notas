@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+:root {
+  /* Tema claro fixo (sem dark mode). */
+  --background: #f1f5f9; /* slate-100 */
+  --foreground: #1e293b; /* slate-800 */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Estilos mínimos para o preview de Markdown (sem plugin de typography). */
+.prose-notas h1 { font-size: 1.5rem; font-weight: 700; margin: 0.8em 0 0.4em; }
+.prose-notas h2 { font-size: 1.25rem; font-weight: 700; margin: 0.8em 0 0.4em; }
+.prose-notas h3 { font-size: 1.1rem; font-weight: 600; margin: 0.8em 0 0.4em; }
+.prose-notas p { margin: 0.6em 0; }
+.prose-notas ul { list-style: disc; padding-left: 1.4em; margin: 0.6em 0; }
+.prose-notas ol { list-style: decimal; padding-left: 1.4em; margin: 0.6em 0; }
+.prose-notas li { margin: 0.2em 0; }
+.prose-notas a { color: #2563eb; text-decoration: underline; }
+.prose-notas code {
+  background: rgba(120, 120, 120, 0.18);
+  padding: 0.1em 0.35em;
+  border-radius: 0.3em;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.9em;
+}
+.prose-notas pre {
+  background: rgba(120, 120, 120, 0.14);
+  padding: 0.8em 1em;
+  border-radius: 0.5em;
+  overflow-x: auto;
+  margin: 0.6em 0;
+}
+.prose-notas pre code { background: none; padding: 0; }
+.prose-notas blockquote {
+  border-left: 3px solid rgba(120, 120, 120, 0.4);
+  padding-left: 1em;
+  color: rgba(120, 120, 120, 1);
+  margin: 0.6em 0;
+}
+.prose-notas table { border-collapse: collapse; margin: 0.6em 0; }
+.prose-notas th, .prose-notas td {
+  border: 1px solid rgba(120, 120, 120, 0.3);
+  padding: 0.3em 0.6em;
+}
+.prose-notas input[type="checkbox"] { margin-right: 0.4em; }
