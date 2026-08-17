@@ -23,6 +23,15 @@ function localInputToIso(value: string): string | null {
   return new Date(value).toISOString();
 }
 
+// Compara duas datas ISO pelo instante (não pela string). O servidor devolve
+// o timestamp em outro formato (ex.: "+00:00" vs ".000Z"), então comparar
+// string a string causaria um autosave em loop.
+function sameInstant(a: string | null, b: string | null): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  return new Date(a).getTime() === new Date(b).getTime();
+}
+
 export default function NoteEditor({
   note,
   allTags,
@@ -76,7 +85,7 @@ export default function NoteEditor({
       title === note.title &&
       content === note.content &&
       sameTags &&
-      remindIso === (note.remind_at ?? null);
+      sameInstant(remindIso, note.remind_at ?? null);
     if (unchanged) return;
 
     if (saveTimer.current) window.clearTimeout(saveTimer.current);

@@ -50,8 +50,15 @@ export default function NotesApp({
   }, []);
 
   // Leitura reativa da cópia local — atualiza sozinha a cada mudança no Dexie.
+  // Ordena por instante (Date.parse) para ser robusto a formatos de data
+  // diferentes vindos do servidor e evitar a lista "pulando" ao editar.
   const allNotes = useLiveQuery(
-    () => db.notes.orderBy("updated_at").reverse().toArray(),
+    async () => {
+      const all = await db.notes.toArray();
+      return all.sort(
+        (a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at),
+      );
+    },
     [],
     [],
   );

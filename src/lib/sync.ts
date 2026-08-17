@@ -112,18 +112,31 @@ async function pull(
   if (!data || data.length === 0) return;
 
   let maxUpdated = since ?? "";
+  let maxUpdatedMs = since ? Date.parse(since) : 0;
   await db.transaction("rw", db.notes, async () => {
     for (const remote of data) {
-      if (remote.updated_at > maxUpdated) maxUpdated = remote.updated_at;
+      const remoteMs = Date.parse(remote.updated_at);
+      // Cursor pelo maior instante (o servidor entende qualquer ISO no .gt()).
+      if (remoteMs > maxUpdatedMs) {
+        maxUpdatedMs = remoteMs;
+        maxUpdated = remote.updated_at;
+      }
+
+      // Normaliza o updated_at para ISO canônico (…Z), para a ordenação e as
+      // comparações locais serem sempre por instante, não por string.
+      const normalized = {
+        ...remote,
+        updated_at: new Date(remoteMs).toISOString(),
+      };
 
       const local = await db.notes.get(remote.id);
-      // Só sobrescreve se o servidor for mais novo E a local não estiver
-      // pendente com versão mais recente (last-write-wins por updated_at).
-      if (!local || remote.updated_at >= local.updated_at) {
+      // Só sobrescreve se o servidor for igual/mais novo (comparação por
+      // instante). Local pendente com versão mais recente é preservada.
+      if (!local || remoteMs >= Date.parse(local.updated_at)) {
         if (remote.deleted_at) {
           await db.notes.delete(remote.id);
         } else {
-          await db.notes.put({ ...remote, dirty: 0 });
+          await db.notes.put({ ...normalized, dirty: 0 });
         }
       }
     }

@@ -2,6 +2,16 @@ import { db } from "./db";
 import type { LocalNote, NoteDraft } from "./types";
 import { requestSync } from "./sync";
 
+// updated_at monotônico: nunca anda pra trás para uma mesma nota. Evita que a
+// nota fique "pulando de posição" ao editar (por diferença de relógio entre
+// cliente e servidor). Sempre em ISO canônico (…Z).
+function nextUpdatedAt(prev?: string | null): string {
+  const now = Date.now();
+  const prevMs = prev ? Date.parse(prev) : 0;
+  const ms = Number.isNaN(prevMs) ? now : Math.max(now, prevMs + 1);
+  return new Date(ms).toISOString();
+}
+
 // Gera um UUID no cliente (as escritas nascem locais e offline-first).
 function uuid(): string {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
@@ -49,7 +59,7 @@ export async function updateNote(
     ...existing,
     ...patch,
     tags: patch.tags ? normalizeTags(patch.tags) : existing.tags,
-    updated_at: new Date().toISOString(),
+    updated_at: nextUpdatedAt(existing.updated_at),
     dirty: 1,
   };
   await db.notes.put(updated);
@@ -60,10 +70,11 @@ export async function updateNote(
 export async function deleteNote(id: string): Promise<void> {
   const existing = await db.notes.get(id);
   if (!existing) return;
+  const ts = nextUpdatedAt(existing.updated_at);
   await db.notes.put({
     ...existing,
-    deleted_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    deleted_at: ts,
+    updated_at: ts,
     dirty: 1,
   });
   requestSync();

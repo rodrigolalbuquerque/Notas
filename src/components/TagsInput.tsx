@@ -55,6 +55,13 @@ export default function TagsInput({
       }
       return;
     }
+    // Tab aplica a sugestão ativa (a primeira, por padrão), como o Enter.
+    // Só intercepta o Tab quando há sugestão; senão deixa mudar de campo.
+    if (e.key === "Tab" && open && input.trim() && matches[active]) {
+      e.preventDefault();
+      addTag(matches[active]);
+      return;
+    }
     // Backspace com input vazio remove a última tag.
     if (e.key === "Backspace" && input === "" && value.length > 0) {
       e.preventDefault();
